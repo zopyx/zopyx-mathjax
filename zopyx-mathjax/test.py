@@ -1,3 +1,4 @@
+import os
 import sys
 import lxml.html
 import hashlib
@@ -8,10 +9,23 @@ with open(fn, 'r') as fp:
     root = lxml.html.fromstring(fp.read())
 
 for node in root.xpath('//math'):
-    formula = node.text.strip().encode('utf8')
+    formula = node.text.strip()
     print(formula)
     h = hashlib.sha256()
-    h.update(formula)
+    h.update(formula.encode('utf8'))
+    digest = h.hexdigest()
     print(h.hexdigest())
 
-                
+    with open('template.html', 'r') as fp:
+        template = fp.read()
+
+    template = template.replace('$$$$', formula)
+
+    with open('out.html', 'w') as fp:
+        fp.write(template)
+
+    cmd = 'wkhtmltopdf out.html --javascript-delay 25000 out.pdf'                
+    print(cmd)
+    os.system(cmd)
+
+    cmd = './pdfcrop.pl --margins 0 out.pdf {}.pdf'.format(digest)
