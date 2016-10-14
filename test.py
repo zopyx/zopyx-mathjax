@@ -27,6 +27,7 @@ for node in root.xpath('//math'):
             fp.write(template)
 
         cmd = 'wkhtmltopdf out.html --javascript-delay 7500 out.pdf'                
+#        cmd = 'phantomjs pdf.js out.html out.pdf'                
         print(cmd)
         os.system(cmd)
 
