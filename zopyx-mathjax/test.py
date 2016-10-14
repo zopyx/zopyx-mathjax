@@ -29,3 +29,17 @@ for node in root.xpath('//math'):
     os.system(cmd)
 
     cmd = './pdfcrop.pl --margins 0 out.pdf {}.pdf'.format(digest)
+    print(cmd)
+    os.system(cmd)
+
+    img_tag = lxml.html.fromstring('<img src="{}.pdf" style="display:block">'.format(digest))
+    node.getparent().replace(node, img_tag)
+
+
+with open('final.html', 'wb') as fp:
+    fp.write(lxml.etree.tostring(root))
+
+cmd = 'run.sh -d final.html >final.pdf'
+print(cmd)
+os.system(cmd)
+
