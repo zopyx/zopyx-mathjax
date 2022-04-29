@@ -16,7 +16,7 @@ for node in root.xpath('//math'):
     digest = h.hexdigest()
     print(h.hexdigest())
 
-    if not os.path.exists('{}.pdf'.format(digest)):
+    if not os.path.exists(f'{digest}.pdf'):
 
         with open('template.html', 'r') as fp:
             template = fp.read()
@@ -26,16 +26,19 @@ for node in root.xpath('//math'):
         with open('out.html', 'w') as fp:
             fp.write(template)
 
-        cmd = 'wkhtmltopdf out.html --javascript-delay 7500 out.pdf'                
+        cmd = 'wkhtmltopdf out.html --javascript-delay 7500 out.pdf'
 #        cmd = 'phantomjs pdf.js out.html out.pdf'                
         print(cmd)
         os.system(cmd)
 
-        cmd = './pdfcrop.pl --margins 0 out.pdf {}.pdf'.format(digest)
+        cmd = f'./pdfcrop.pl --margins 0 out.pdf {digest}.pdf'
         print(cmd)
         os.system(cmd)
 
-    img_tag = lxml.html.fromstring('<img src="{}.pdf" style="display:block">'.format(digest))
+    img_tag = lxml.html.fromstring(
+        f'<img src="{digest}.pdf" style="display:block">'
+    )
+
     node.getparent().replace(node, img_tag)
 
 
